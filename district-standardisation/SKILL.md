@@ -1,0 +1,32 @@
+---
+name: district-standardization
+
+description: Standardize raw district names to LGD (Local Government Directory) standards using fuzzy matching.
+---
+
+
+## ENVIRONMENT
+- **Runtime:** Python 3.x
+- **Deps:** `pip install fuzzywuzzy python-Levenshtein pandas`
+- **Data:** `./assets/district_dictionary.csv` (Reference)
+- **Target:** `output.csv` (Input/Output)
+
+## ACTION: MAP_DISTRICTS
+1. **Load Reference:** Read `district_as_per_lgd` and `lgd_code` from `./assets/district_dictionary.csv`.
+2. **Context Filter:** Match `district` only within the scope of the corresponding `state` column.
+3. **Match Strategy:** - Primary: Exact string match (case-insensitive).
+   - Secondary: Fuzzy match (Threshold: 90+).
+4. **Update Schema:** - Append `district_as_per_lgd`
+   - Append `lgd_code`
+
+## ERROR HANDLING
+- **Strict Validation:** If no match found > **Throw Error**: `"Unmatched District: [name] in State: [state]"`
+- **Stop on Error:** Do not populate rows with null or low-confidence guesses.
+
+## USAGE EXAMPLE
+```python
+# Internal Logic Hint
+df_ref = pd.read_csv('./assets/district_dictionary.csv')
+
+# Perform merge/fuzzy match logic here
+
